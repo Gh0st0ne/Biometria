@@ -22,6 +22,7 @@ import huellas.HuellaDactilar;
 
 import javax.swing.border.EtchedBorder;
 import java.awt.Color;
+import javax.swing.JSlider;
 
 public class Ventana {
 	
@@ -37,9 +38,18 @@ public class Ventana {
 	JPanel panelBordeDerecha;
 	JPanel panelHuellaDerecha;
 	
+	// Huellas mostradas en la interfaz
+	HuellaDactilar huellaIzquierda;
+	HuellaDactilar huellaDerecha;
+	
 	// Botones de la interfaz
 	private JButton btnCargarHuella;
 	private JButton btnGrises;
+	private JButton btnEcualizar;
+	private JButton btnUmbralizar;
+	
+	private JSlider sliderUmbral;
+	
 
 	/**
 	 * Create the application.
@@ -48,6 +58,8 @@ public class Ventana {
 		initialize();
 		
 		gh = new GestorHuellas();
+		huellaIzquierda = null;
+		huellaDerecha = null;
 	}
 
 	/**
@@ -128,9 +140,15 @@ public class Ventana {
 			public void actionPerformed(ActionEvent e) {
 				
 				HuellaDactilar huellaGrises = gh.convertirGrises( gh.getHuellaOriginal() );
+				gh.almacenarEnHistorial( huellaGrises );
+				huellaDerecha = huellaGrises;
+				
 				BufferedImage huellaAMostrar = gh.convertirRGB( huellaGrises , GestorHuellas.HUELLA_GRIS );
 				
 				pintarPanelDerecha( huellaAMostrar );
+				
+				btnGrises.setEnabled( false );
+				btnEcualizar.setEnabled( true );
 				
 			}
 		});
@@ -138,6 +156,65 @@ public class Ventana {
 		btnGrises.setBounds(6, 556, 117, 29);
 		frame.getContentPane().add(btnGrises);
 		btnGrises.setEnabled( false );
+		
+		// BOTÓN PARA ECUALIZAR
+		btnEcualizar = new JButton("Ecualizar");
+		btnEcualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_GRIS );
+				pintarPanelIzquierda( huellaAMostrar );
+				
+				HuellaDactilar huellaEcualizada = gh.ecualizado( huellaDerecha );
+				gh.almacenarEnHistorial( huellaEcualizada );
+				huellaDerecha = huellaEcualizada;
+				
+				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_GRIS );
+				pintarPanelDerecha( huellaAMostrar );
+				
+				btnEcualizar.setEnabled( false );
+				btnUmbralizar.setEnabled( true );
+				sliderUmbral.setEnabled( true );
+				sliderUmbral.setValue( gh.getUmbralMedio() );
+			}
+		});
+		btnEcualizar.setBounds(122, 556, 117, 29);
+		frame.getContentPane().add(btnEcualizar);
+		btnEcualizar.setEnabled( false );
+		
+		
+		// BOTÓN PARA UMBRALIZAR
+		btnUmbralizar = new JButton("Umbralizar");
+		btnUmbralizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_GRIS );
+				pintarPanelIzquierda( huellaAMostrar );
+				
+				HuellaDactilar huellaUmbralizada = gh.umbralizar( huellaDerecha , sliderUmbral.getValue() );
+				gh.almacenarEnHistorial( huellaUmbralizada );
+				huellaDerecha = huellaUmbralizada;
+				
+				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
+				pintarPanelDerecha( huellaAMostrar );
+				
+				btnUmbralizar.setEnabled( false );
+				
+			}
+		});
+		btnUmbralizar.setBounds(239, 556, 117, 29);
+		frame.getContentPane().add(btnUmbralizar);
+		btnUmbralizar.setEnabled( false );
+		
+		// SLIDER PARA MARCAR EL UMBRAL
+		sliderUmbral = new JSlider( 0 , 256 );
+		sliderUmbral.setMinorTickSpacing(16);
+		sliderUmbral.setPaintLabels( true );
+		sliderUmbral.setPaintTicks( true );
+		sliderUmbral.setMajorTickSpacing(64);
+		sliderUmbral.setBounds(357, 556, 190, 29);
+		frame.getContentPane().add(sliderUmbral);
+		sliderUmbral.setEnabled( false );
 		
 	}
 	
@@ -151,6 +228,14 @@ public class Ventana {
 		g.drawImage( huellaAMostrar , 0 , 0 , null );
 	}
 	
+	private void pintarPanelIzquierda( HuellaDactilar huellaAMostrar , int modo ){
+		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaAMostrar , modo );
+		
+		Graphics g = panelHuellaIzquierda.getGraphics();
+		panelHuellaIzquierda.paintComponents( g );
+		g.drawImage( imagenHuellaAMostrar , 0 , 0 , null );
+	}
+	
 	/**
 	 * Pinta en el marco derecho de la interfaz la BufferedImage pasada por parámetros
 	 * @param huellaAMostrar la imagen de la huella que se desea mostrar en la interfaz
@@ -161,7 +246,13 @@ public class Ventana {
 		g.drawImage( huellaAMostrar , 0 , 0 , null );
 	}
 	
-	
+	private void pintarPanelDerecha( HuellaDactilar huellaAMostrar , int modo ){
+		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaAMostrar , modo );
+		
+		Graphics g = panelHuellaDerecha.getGraphics();
+		panelHuellaIzquierda.paintComponents( g );
+		g.drawImage( imagenHuellaAMostrar , 0 , 0 , null );
+	}
 	
 	
 	
@@ -194,5 +285,4 @@ public class Ventana {
 			}
 		});
 	}
-	
 }
