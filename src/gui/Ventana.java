@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import huellas.GestorHuellas;
 import huellas.HuellaDactilar;
@@ -33,10 +35,10 @@ public class Ventana {
 	private JFrame frame;
 	
 	// Paneles donde se muestran las huellas
-	JPanel panelBordeIzquierda;
-	JPanel panelHuellaIzquierda;
-	JPanel panelBordeDerecha;
-	JPanel panelHuellaDerecha;
+	private JPanel panelBordeIzquierda;
+	private JPanel panelHuellaIzquierda;
+	private JPanel panelBordeDerecha;
+	private JPanel panelHuellaDerecha;
 	
 	// Huellas mostradas en la interfaz
 	HuellaDactilar huellaIzquierda;
@@ -44,11 +46,18 @@ public class Ventana {
 	
 	// Botones de la interfaz
 	private JButton btnCargarHuella;
+	private JButton btnDeshacer;
+	private JButton btnReiniciar;
+	
 	private JButton btnGrises;
 	private JButton btnEcualizar;
 	private JButton btnUmbralizar;
 	
 	private JSlider sliderUmbral;
+	
+	private JButton btnFiltrar;
+
+
 	
 
 	/**
@@ -68,12 +77,12 @@ public class Ventana {
 	private void initialize() {
 		
 		frame = new JFrame();
-		frame.setBounds( 100 , 100 , 765 , 620 );
+		frame.setBounds( 100 , 100 , 920 , 570 );
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable( false );
 		frame.getContentPane().setLayout(null);
 		
-		// PANEL DE LA HUELLA ORIGINAL
+		// PANEL DE LA HUELLA IZQUIERDA
 		panelBordeIzquierda = new JPanel();
 		panelBordeIzquierda.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Huella original", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panelBordeIzquierda.setBounds(6, 40, 372, 504);
@@ -84,10 +93,10 @@ public class Ventana {
 		panelHuellaIzquierda.setBounds(6, 18, 360, 480);
 		panelBordeIzquierda.add(panelHuellaIzquierda);
 		
-		// PANEL DE LA HUELLA TRATADA
+		// PANEL DE LA HUELLA DERECHA
 		panelBordeDerecha = new JPanel();
 		panelBordeDerecha.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Huella tratada", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panelBordeDerecha.setBounds(390, 40, 372, 504);
+		panelBordeDerecha.setBounds(542, 40, 372, 504);
 		frame.getContentPane().add(panelBordeDerecha);
 		panelBordeDerecha.setLayout(null);
 		
@@ -123,6 +132,7 @@ public class Ventana {
 						pintarPanelIzquierda( huella );
 						
 						btnGrises.setEnabled( true );
+						
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -133,6 +143,31 @@ public class Ventana {
 		
 		btnCargarHuella.setBounds(6, 6, 117, 29);
 		frame.getContentPane().add(btnCargarHuella);
+		
+		// BOTÓN DESHACER
+//		btnDeshacer = new JButton("Deshacer");
+//		btnDeshacer.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				
+//				
+//			}
+//		});
+//		btnDeshacer.setBounds(126, 6, 117, 29);
+//		frame.getContentPane().add(btnDeshacer);
+//		btnDeshacer.setEnabled( false );
+		
+		// BOTÓN REINICIAR
+//		btnReiniciar = new JButton("Reiniciar");
+//		btnReiniciar.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				
+//				
+//				
+//			}
+//		});
+//		btnReiniciar.setBounds(245, 6, 117, 29);
+//		frame.getContentPane().add(btnReiniciar);
+//		btnReiniciar.setEnabled( false );
 		
 		// BOTÓN PARA CONVERTIR LA HUELLA A ESCALA DE GRISES
 		btnGrises = new JButton("Grises");
@@ -153,7 +188,7 @@ public class Ventana {
 			}
 		});
 		
-		btnGrises.setBounds(6, 556, 117, 29);
+		btnGrises.setBounds(390, 55, 135, 29);
 		frame.getContentPane().add(btnGrises);
 		btnGrises.setEnabled( false );
 		
@@ -178,7 +213,7 @@ public class Ventana {
 				sliderUmbral.setValue( gh.getUmbralMedio() );
 			}
 		});
-		btnEcualizar.setBounds(122, 556, 117, 29);
+		btnEcualizar.setBounds(390, 86, 135, 29);
 		frame.getContentPane().add(btnEcualizar);
 		btnEcualizar.setEnabled( false );
 		
@@ -199,10 +234,12 @@ public class Ventana {
 				pintarPanelDerecha( huellaAMostrar );
 				
 				btnUmbralizar.setEnabled( false );
+				sliderUmbral.setEnabled( false );
+				btnFiltrar.setEnabled( true );
 				
 			}
 		});
-		btnUmbralizar.setBounds(239, 556, 117, 29);
+		btnUmbralizar.setBounds(390, 116, 135, 29);
 		frame.getContentPane().add(btnUmbralizar);
 		btnUmbralizar.setEnabled( false );
 		
@@ -212,9 +249,49 @@ public class Ventana {
 		sliderUmbral.setPaintLabels( true );
 		sliderUmbral.setPaintTicks( true );
 		sliderUmbral.setMajorTickSpacing(64);
-		sliderUmbral.setBounds(357, 556, 190, 29);
+		sliderUmbral.setBounds(376, 153, 140, 39);
 		frame.getContentPane().add(sliderUmbral);
 		sliderUmbral.setEnabled( false );
+		
+	    sliderUmbral.addChangeListener( new ChangeListener() {
+	        public void stateChanged(ChangeEvent e) {
+	          System.out.println("Slider Umbral: " + sliderUmbral.getValue());
+	        	
+//				HuellaDactilar huellaUmbralizada = gh.umbralizar( huellaDerecha , sliderUmbral.getValue() );
+//				huellaDerecha = huellaUmbralizada;
+//				
+//				pintarPanelDerecha( huellaUmbralizada , GestorHuellas.HUELLA_BYN );
+	        	
+	        }
+	      });
+		
+		
+		// BOTÓN PARA FILTRAR
+		btnFiltrar = new JButton("Filtrar");
+		btnFiltrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
+				pintarPanelIzquierda( huellaAMostrar );
+				
+				HuellaDactilar huellaFiltrada = gh.filtrar( huellaDerecha );
+				gh.almacenarEnHistorial( huellaFiltrada );
+				huellaDerecha = huellaFiltrada;
+				
+				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
+				pintarPanelDerecha( huellaAMostrar );
+				
+				btnFiltrar.setEnabled( false );
+				
+			}
+		});
+		btnFiltrar.setBounds(386, 204, 117, 29);
+		frame.getContentPane().add(btnFiltrar);
+		btnFiltrar.setEnabled( false );
+		
+
+		
+
 		
 	}
 	

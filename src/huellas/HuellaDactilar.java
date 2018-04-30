@@ -6,17 +6,17 @@ public class HuellaDactilar {
 	private int height;
 	private int[][] imagen;
 	
-	public HuellaDactilar(int width, int height) {
-		imagen= new int[width][height];
-		this.width= width;
-		this.height= height;
+	public HuellaDactilar( int width , int height ) {
+		imagen = new int[width][height];
+		this.width = width;
+		this.height = height;
 	}
 	
-	public void setPixel(int x, int y, int pixel){
-		imagen[x][y]= pixel;
+	public void setPixel( int x , int y , int pixel ){
+		imagen[x][y] = pixel;
 	}
 	
-	public int getPixel(int x, int y){
+	public int getPixel( int x , int y ){
 		return imagen[x][y];
 	}
 	
@@ -27,4 +27,5 @@ public class HuellaDactilar {
 	public int getHeight(){
 		return this.height;
 	}
+	
 }
