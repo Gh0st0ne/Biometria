@@ -3,6 +3,8 @@ package huellas;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 
+import librerias.ZhangSuen;
+
 public class GestorHuellas {
 	
 	// Constantes de clase para tipo de huella
@@ -266,6 +268,33 @@ public class GestorHuellas {
 			 }
 		 }
 		 		 
+		 return imgSalida;
+	 }
+	 
+	 /**
+	  * Método que adelagaza la huella utilizando el algoritmo ZhangSuen
+	  * @param imgEntrada la Huella que se quiere adelgazar
+	  * @return objeto HuellaDactilar con la huella adelgazada
+	  */
+	 public HuellaDactilar adelgazar( HuellaDactilar imgEntrada ) {
+		 HuellaDactilar imgSalida = new HuellaDactilar( imgEntrada.getWidth() , imgEntrada.getHeight() );
+		 
+	        ZhangSuen.grid = new int[imgEntrada.getWidth()][imgEntrada.getHeight()];
+		        
+		    	for (int i=0; i<imgEntrada.getWidth(); i++){
+		    		for (int j=0; j<imgEntrada.getHeight(); j++){
+		    			ZhangSuen.grid[i][j] = imgEntrada.getPixel(i, j);
+		    		}
+		    	}
+		    	
+		    	ZhangSuen.thinImage();
+		    	
+		    	for (int i=0; i<imgSalida.getWidth(); i++){
+		    		for (int j=0; j<imgSalida.getHeight(); j++){
+		    			imgSalida.setPixel(i, j, ZhangSuen.grid[i][j]);
+		    		}
+		    	}
+		 
 		 return imgSalida;
 	 }
 	 

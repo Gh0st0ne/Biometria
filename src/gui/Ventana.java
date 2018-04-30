@@ -56,6 +56,7 @@ public class Ventana {
 	private JSlider sliderUmbral;
 	
 	private JButton btnFiltrar;
+	private JButton btnAdelgazar;
 
 
 	
@@ -282,12 +283,26 @@ public class Ventana {
 				pintarPanelDerecha( huellaAMostrar );
 				
 				btnFiltrar.setEnabled( false );
+				btnAdelgazar.setEnabled( true );
 				
 			}
 		});
 		btnFiltrar.setBounds(386, 204, 117, 29);
 		frame.getContentPane().add(btnFiltrar);
 		btnFiltrar.setEnabled( false );
+		
+		// BOTÓN PARA ADELGAZAR
+		btnAdelgazar = new JButton("Adelgazar");
+		btnAdelgazar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+			}
+		});
+		btnAdelgazar.setBounds(399, 245, 117, 29);
+		frame.getContentPane().add(btnAdelgazar);
+		btnAdelgazar.setEnabled( false );
 		
 
 		
