@@ -296,17 +296,23 @@ public class Ventana {
 		btnAdelgazar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
+				pintarPanelIzquierda( huellaAMostrar );
 				
+				HuellaDactilar huellaAdelgazada = gh.adelgazar( huellaDerecha );
+				gh.almacenarEnHistorial( huellaAdelgazada );
+				huellaDerecha = huellaAdelgazada;
+				
+				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
+				pintarPanelDerecha( huellaAMostrar );
+				
+				btnAdelgazar.setEnabled( false );
 				
 			}
 		});
 		btnAdelgazar.setBounds(399, 245, 117, 29);
 		frame.getContentPane().add(btnAdelgazar);
 		btnAdelgazar.setEnabled( false );
-		
-
-		
-
 		
 	}
 	
