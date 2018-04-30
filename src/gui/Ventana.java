@@ -142,33 +142,33 @@ public class Ventana {
 			}
 		});
 		
-		btnCargarHuella.setBounds(6, 6, 117, 29);
+		btnCargarHuella.setBounds(7, 7, 117, 29);
 		frame.getContentPane().add(btnCargarHuella);
 		
 		// BOTÓN DESHACER
-//		btnDeshacer = new JButton("Deshacer");
-//		btnDeshacer.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				
-//			}
-//		});
-//		btnDeshacer.setBounds(126, 6, 117, 29);
-//		frame.getContentPane().add(btnDeshacer);
-//		btnDeshacer.setEnabled( false );
+		btnDeshacer = new JButton("Deshacer");
+		btnDeshacer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+			}
+		});
+		btnDeshacer.setBounds(124, 7, 117, 29);
+		frame.getContentPane().add(btnDeshacer);
+		btnDeshacer.setEnabled( false );
 		
 		// BOTÓN REINICIAR
-//		btnReiniciar = new JButton("Reiniciar");
-//		btnReiniciar.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				
-//				
-//			}
-//		});
-//		btnReiniciar.setBounds(245, 6, 117, 29);
-//		frame.getContentPane().add(btnReiniciar);
-//		btnReiniciar.setEnabled( false );
+		btnReiniciar = new JButton("Reiniciar");
+		btnReiniciar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				resetear();
+				
+			}
+		});
+		btnReiniciar.setBounds(241, 7, 117, 29);
+		frame.getContentPane().add(btnReiniciar);
+		btnReiniciar.setEnabled( false );
 		
 		// BOTÓN PARA CONVERTIR LA HUELLA A ESCALA DE GRISES
 		btnGrises = new JButton("Grises");
@@ -185,6 +185,8 @@ public class Ventana {
 				
 				btnGrises.setEnabled( false );
 				btnEcualizar.setEnabled( true );
+				
+				btnReiniciar.setEnabled( true );
 				
 			}
 		});
@@ -214,7 +216,7 @@ public class Ventana {
 				sliderUmbral.setValue( gh.getUmbralMedio() );
 			}
 		});
-		btnEcualizar.setBounds(390, 86, 135, 29);
+		btnEcualizar.setBounds(390, 83, 135, 29);
 		frame.getContentPane().add(btnEcualizar);
 		btnEcualizar.setEnabled( false );
 		
@@ -240,7 +242,7 @@ public class Ventana {
 				
 			}
 		});
-		btnUmbralizar.setBounds(390, 116, 135, 29);
+		btnUmbralizar.setBounds(390, 111, 135, 29);
 		frame.getContentPane().add(btnUmbralizar);
 		btnUmbralizar.setEnabled( false );
 		
@@ -250,7 +252,7 @@ public class Ventana {
 		sliderUmbral.setPaintLabels( true );
 		sliderUmbral.setPaintTicks( true );
 		sliderUmbral.setMajorTickSpacing(64);
-		sliderUmbral.setBounds(376, 153, 140, 39);
+		sliderUmbral.setBounds(385, 153, 145, 39);
 		frame.getContentPane().add(sliderUmbral);
 		sliderUmbral.setEnabled( false );
 		
@@ -287,7 +289,7 @@ public class Ventana {
 				
 			}
 		});
-		btnFiltrar.setBounds(386, 204, 117, 29);
+		btnFiltrar.setBounds(390, 204, 135, 29);
 		frame.getContentPane().add(btnFiltrar);
 		btnFiltrar.setEnabled( false );
 		
@@ -310,7 +312,7 @@ public class Ventana {
 				
 			}
 		});
-		btnAdelgazar.setBounds(399, 245, 117, 29);
+		btnAdelgazar.setBounds(390, 232, 135, 29);
 		frame.getContentPane().add(btnAdelgazar);
 		btnAdelgazar.setEnabled( false );
 		
@@ -357,7 +359,23 @@ public class Ventana {
 	
 	
 	
-	
+	private void resetear() {
+		pintarPanelIzquierda( gh.getHuellaOriginal() );
+		
+		
+		Graphics g = panelHuellaDerecha.getGraphics();
+		panelHuellaDerecha.paintComponents(g);
+		g.clearRect( 0 , 0 , panelHuellaDerecha.getWidth() , panelHuellaDerecha.getHeight() );
+		
+		btnReiniciar.setEnabled( false );
+		
+		btnGrises.setEnabled( true );
+		btnEcualizar.setEnabled( false );
+		btnUmbralizar.setEnabled( false );
+		sliderUmbral.setEnabled( false );
+		btnFiltrar.setEnabled( false );
+		btnAdelgazar.setEnabled( false );
+	}
 	
 	
 	
