@@ -1,40 +1,12 @@
 package librerias;
 
-/**
- * 
- * 	LIBRERÍA PARA REALIZACIÓN DE ALGORITMO DE ZHANGSUEN
- * 	DESCARGADA DE: Zhang-Suen thinning algorithm EN https://rosettacode.org/wiki/Zhang-Suen_thinning_algorithm
- * 
- * 	MODIFICADA LEVEMENTE PARA LA ADECUACIÓN AL USO DE ESTE PROYECTO
- * 
- */
-
-
 import java.awt.Point;
 import java.util.*;
+
+import huellas.HuellaDactilar;
  
 public class ZhangSuen {
- 
-    final static String[] image = {
-        "                                                          ",
-        " #################                   #############        ",
-        " ##################               ################        ",
-        " ###################            ##################        ",
-        " ########     #######          ###################        ",
-        "   ######     #######         #######       ######        ",
-        "   ######     #######        #######                      ",
-        "   #################         #######                      ",
-        "   ################          #######                      ",
-        "   #################         #######                      ",
-        "   ######     #######        #######                      ",
-        "   ######     #######        #######                      ",
-        "   ######     #######         #######       ######        ",
-        " ########     #######          ###################        ",
-        " ########     ####### ######    ################## ###### ",
-        " ########     ####### ######      ################ ###### ",
-        " ########     ####### ######         ############# ###### ",
-        "                                                          "};
- 
+  
     final static int[][] nbrs = {{0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1},
         {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}};
  
@@ -42,17 +14,19 @@ public class ZhangSuen {
         {0, 4, 6}}};
  
     static List<Point> toWhite = new ArrayList<>();
-    public static int[][] grid;
+    static int[][] grid;
+    
+    public ZhangSuen(HuellaDactilar imagen){
+	    	grid = new int[imagen.getWidth()][imagen.getHeight()];
+	    	
+	    	for (int i=0; i<imagen.getWidth(); i++){
+	    		for (int j=0; j<imagen.getHeight(); j++){
+	    			grid[i][j] = imagen.getPixel(i, j);
+	    		}
+	    	}
+    }
  
-//    public static void main(String[] args) {
-//        grid = new char[image.length][];
-//        for (int r = 0; r < image.length; r++)
-//            grid[r] = image[r].toCharArray();
-// 
-//        thinImage();
-//    }
- 
-    public static void thinImage() {
+    public HuellaDactilar thinImage() {
         boolean firstStep = false;
         boolean hasChanged;
  
@@ -63,7 +37,7 @@ public class ZhangSuen {
             for (int r = 1; r < grid.length - 1; r++) {
                 for (int c = 1; c < grid[0].length - 1; c++) {
  
-                    if (grid[r][c] != '#')
+                    if (grid[r][c] != 0)
                         continue;
  
                     int nn = numNeighbors(r, c);
@@ -82,18 +56,26 @@ public class ZhangSuen {
             }
  
             for (Point p : toWhite)
-                grid[p.y][p.x] = ' ';
+                grid[p.y][p.x] = 1;
             toWhite.clear();
  
         } while (firstStep || hasChanged);
- 
-//        printResult();
+        
+        HuellaDactilar salida = new HuellaDactilar(grid.length, grid[0].length);
+        
+        for (int i=0; i<grid.length; i++){
+	    		for (int j=0; j<grid[0].length; j++){
+	    			salida.setPixel(i, j, grid[i][j]);;
+	    		}
+        }
+        
+        return salida;
     }
  
     static int numNeighbors(int r, int c) {
         int count = 0;
         for (int i = 0; i < nbrs.length - 1; i++)
-            if (grid[r + nbrs[i][1]][c + nbrs[i][0]] == '#')
+            if (grid[r + nbrs[i][1]][c + nbrs[i][0]] == 0)
                 count++;
         return count;
     }
@@ -101,8 +83,8 @@ public class ZhangSuen {
     static int numTransitions(int r, int c) {
         int count = 0;
         for (int i = 0; i < nbrs.length - 1; i++)
-            if (grid[r + nbrs[i][1]][c + nbrs[i][0]] == ' ') {
-                if (grid[r + nbrs[i + 1][1]][c + nbrs[i + 1][0]] == '#')
+            if (grid[r + nbrs[i][1]][c + nbrs[i][0]] == 1) {
+                if (grid[r + nbrs[i + 1][1]][c + nbrs[i + 1][0]] == 0)
                     count++;
             }
         return count;
@@ -114,16 +96,12 @@ public class ZhangSuen {
         for (int i = 0; i < 2; i++)
             for (int j = 0; j < group[i].length; j++) {
                 int[] nbr = nbrs[group[i][j]];
-                if (grid[r + nbr[1]][c + nbr[0]] == ' ') {
+                if (grid[r + nbr[1]][c + nbr[0]] == 1) {
                     count++;
                     break;
                 }
             }
         return count > 1;
     }
- 
-//    static void printResult() {
-//        for (char[] row : grid)
-//            System.out.println(row);
-//    }
+
 }

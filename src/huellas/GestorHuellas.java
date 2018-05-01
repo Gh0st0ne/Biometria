@@ -277,25 +277,11 @@ public class GestorHuellas {
 	  * @return objeto HuellaDactilar con la huella adelgazada
 	  */
 	 public HuellaDactilar adelgazar( HuellaDactilar imgEntrada ) {
-		 HuellaDactilar imgSalida = new HuellaDactilar( imgEntrada.getWidth() , imgEntrada.getHeight() );
 		 
-	        ZhangSuen.grid = new int[imgEntrada.getWidth()][imgEntrada.getHeight()];
-		        
-		    	for (int i=0; i<imgEntrada.getWidth(); i++){
-		    		for (int j=0; j<imgEntrada.getHeight(); j++){
-		    			ZhangSuen.grid[i][j] = imgEntrada.getPixel(i, j);
-		    		}
-		    	}
-		    	
-		    	ZhangSuen.thinImage();
-		    	
-		    	for (int i=0; i<imgSalida.getWidth(); i++){
-		    		for (int j=0; j<imgSalida.getHeight(); j++){
-		    			imgSalida.setPixel(i, j, ZhangSuen.grid[i][j]);
-		    		}
-		    	}
-		 
-		 return imgSalida;
+			ZhangSuen zs = new ZhangSuen( imgEntrada );
+			HuellaDactilar imgAdelgazada = zs.thinImage();
+			
+			return imgAdelgazada;
 	 }
 	 
 }

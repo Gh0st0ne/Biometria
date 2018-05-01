@@ -48,18 +48,15 @@ public class Ventana {
 	private JButton btnCargarHuella;
 	private JButton btnDeshacer;
 	private JButton btnReiniciar;
-	
 	private JButton btnGrises;
 	private JButton btnEcualizar;
 	private JButton btnUmbralizar;
-	
 	private JSlider sliderUmbral;
-	
 	private JButton btnFiltrar;
 	private JButton btnAdelgazar;
+	private JButton btnMinucias;
+	private JButton btnAngulos;
 
-
-	
 
 	/**
 	 * Create the application.
@@ -105,7 +102,8 @@ public class Ventana {
 		panelHuellaDerecha.setBounds(6, 18, 360, 480);
 		panelBordeDerecha.add(panelHuellaDerecha);
 		
-		// BOTÓN PARA CARGAR LA HUELLA
+		
+		// ===== BOTÓN PARA CARGAR LA HUELLA =====
 		btnCargarHuella = new JButton("Cargar Huella");
 		btnCargarHuella.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -175,17 +173,15 @@ public class Ventana {
 		btnGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				HuellaDactilar huellaGrises = gh.convertirGrises( gh.getHuellaOriginal() );
-				gh.almacenarEnHistorial( huellaGrises );
-				huellaDerecha = huellaGrises;
-				
-				BufferedImage huellaAMostrar = gh.convertirRGB( huellaGrises , GestorHuellas.HUELLA_GRIS );
-				
-				pintarPanelDerecha( huellaAMostrar );
-				
+				// Convertimos la huella original a Grises y la almacenamos en la huella derecha
+				huellaDerecha = gh.convertirGrises( gh.getHuellaOriginal() );
+
+				// Pinta en el panel de la derecha la huella de la derecha
+				pintarPanelDerecha( GestorHuellas.HUELLA_GRIS );
+
+				// Actualizamos el estado de los botones de la interfaz
 				btnGrises.setEnabled( false );
 				btnEcualizar.setEnabled( true );
-				
 				btnReiniciar.setEnabled( true );
 				
 			}
@@ -200,16 +196,19 @@ public class Ventana {
 		btnEcualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_GRIS );
-				pintarPanelIzquierda( huellaAMostrar );
+				// Copiamos la huella del panel de la derecha a la izquierda
+				huellaIzquierda = huellaDerecha;
 				
-				HuellaDactilar huellaEcualizada = gh.ecualizado( huellaDerecha );
-				gh.almacenarEnHistorial( huellaEcualizada );
-				huellaDerecha = huellaEcualizada;
+				// Pintamos la huella de la izquierda
+				pintarPanelIzquierda( GestorHuellas.HUELLA_GRIS );
 				
-				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_GRIS );
-				pintarPanelDerecha( huellaAMostrar );
+				// Aplicamos el ecualizado a la huella derecha
+				huellaDerecha = gh.ecualizado( huellaDerecha );
+
+				// Pintamos la huella de la derecha
+				pintarPanelDerecha( GestorHuellas.HUELLA_GRIS );
 				
+				// Actualizamos el estado de los botones de la interfaz
 				btnEcualizar.setEnabled( false );
 				btnUmbralizar.setEnabled( true );
 				sliderUmbral.setEnabled( true );
@@ -226,16 +225,19 @@ public class Ventana {
 		btnUmbralizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_GRIS );
-				pintarPanelIzquierda( huellaAMostrar );
+				// Copiamos la huella del panel de la derecha a la izquierda
+				huellaIzquierda = huellaDerecha;				
 				
-				HuellaDactilar huellaUmbralizada = gh.umbralizar( huellaDerecha , sliderUmbral.getValue() );
-				gh.almacenarEnHistorial( huellaUmbralizada );
-				huellaDerecha = huellaUmbralizada;
+				// Pintamos la huella de la izquierda
+				pintarPanelIzquierda( GestorHuellas.HUELLA_GRIS );
 				
-				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
-				pintarPanelDerecha( huellaAMostrar );
+				// Aplicamos el umbralizado a la huella derecha
+				huellaDerecha = gh.umbralizar( huellaDerecha , sliderUmbral.getValue() );
 				
+				// Pintamos la huella de la derecha
+				pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+				
+				// Actualizamos el estado de los botones de la interfaz
 				btnUmbralizar.setEnabled( false );
 				sliderUmbral.setEnabled( false );
 				btnFiltrar.setEnabled( true );
@@ -274,16 +276,19 @@ public class Ventana {
 		btnFiltrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
-				pintarPanelIzquierda( huellaAMostrar );
+				// Copiamos la huella del panel de la derecha a la izquierda
+				huellaIzquierda = huellaDerecha;				
 				
-				HuellaDactilar huellaFiltrada = gh.filtrar( huellaDerecha );
-				gh.almacenarEnHistorial( huellaFiltrada );
-				huellaDerecha = huellaFiltrada;
+				// Pintamos la huella de la izquierda
+				pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
 				
-				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
-				pintarPanelDerecha( huellaAMostrar );
+				// Aplicamos el filtrado a la huella derecha
+				huellaDerecha = gh.filtrar( huellaDerecha );
 				
+				// Pintamos la huella de la derecha
+				pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+				
+				// Actualizamos el estado de los botones de la interfaz
 				btnFiltrar.setEnabled( false );
 				btnAdelgazar.setEnabled( true );
 				
@@ -298,23 +303,67 @@ public class Ventana {
 		btnAdelgazar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				BufferedImage huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
-				pintarPanelIzquierda( huellaAMostrar );
+				// Copiamos la huella del panel de la derecha a la izquierda
+				huellaIzquierda = huellaDerecha;				
 				
-				HuellaDactilar huellaAdelgazada = gh.adelgazar( huellaDerecha );
-				gh.almacenarEnHistorial( huellaAdelgazada );
-				huellaDerecha = huellaAdelgazada;
+				// Pintamos la huella de la izquierda
+				pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
 				
-				huellaAMostrar = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
-				pintarPanelDerecha( huellaAMostrar );
+				// Aplicamos el adelgazado a la huella derecha
+				huellaDerecha = gh.adelgazar( huellaDerecha );
 				
+				// Pintamos la huella de la derecha
+				pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+				
+				// Actualizamos el estado de los botones de la interfaz
 				btnAdelgazar.setEnabled( false );
+				btnMinucias.setEnabled( true );
 				
 			}
 		});
 		btnAdelgazar.setBounds(390, 232, 135, 29);
 		frame.getContentPane().add(btnAdelgazar);
 		btnAdelgazar.setEnabled( false );
+		
+		// BOTÓN MINUCIAS
+		btnMinucias = new JButton("Minucias");
+		btnMinucias.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				// Copiamos la huella del panel de la derecha a la izquierda
+				huellaIzquierda = huellaDerecha;				
+				
+				// Pintamos la huella de la izquierda
+				pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
+				
+				// Detectamos las minucias en la huella derecha
+//				huellaDerecha = gh.adelgazar( huellaDerecha );
+				
+				// Pintamos la huella de la derecha
+//				pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+				
+				// Actualizamos el estado de los botones de la interfaz
+				btnMinucias.setEnabled( false );
+				btnAngulos.setEnabled( true );
+				
+			}
+		});
+		btnMinucias.setBounds(390, 261, 135, 29);
+		frame.getContentPane().add(btnMinucias);
+		btnMinucias.setEnabled( false );
+		
+		// BOTÓN ÁNGULOS
+		btnAngulos = new JButton("Ángulos");
+		btnAngulos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+			}
+		});
+		btnAngulos.setBounds(390, 290, 135, 29);
+		frame.getContentPane().add(btnAngulos);
+		btnAngulos.setEnabled( false );
 		
 	}
 	
@@ -328,33 +377,23 @@ public class Ventana {
 		g.drawImage( huellaAMostrar , 0 , 0 , null );
 	}
 	
-	private void pintarPanelIzquierda( HuellaDactilar huellaAMostrar , int modo ){
-		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaAMostrar , modo );
+	private void pintarPanelIzquierda( int modo ) {
+		
+		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaIzquierda , modo );
 		
 		Graphics g = panelHuellaIzquierda.getGraphics();
 		panelHuellaIzquierda.paintComponents( g );
 		g.drawImage( imagenHuellaAMostrar , 0 , 0 , null );
 	}
 	
-	/**
-	 * Pinta en el marco derecho de la interfaz la BufferedImage pasada por parámetros
-	 * @param huellaAMostrar la imagen de la huella que se desea mostrar en la interfaz
-	 */
-	private void pintarPanelDerecha( BufferedImage huellaAMostrar ) {
-		Graphics g = panelHuellaDerecha.getGraphics();
-		panelHuellaDerecha.paintComponents( g );
-		g.drawImage( huellaAMostrar , 0 , 0 , null );
-	}
-	
-	private void pintarPanelDerecha( HuellaDactilar huellaAMostrar , int modo ){
-		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaAMostrar , modo );
+	private void pintarPanelDerecha( int modo ) {
+		
+		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaDerecha , modo );
 		
 		Graphics g = panelHuellaDerecha.getGraphics();
-		panelHuellaIzquierda.paintComponents( g );
+		panelHuellaDerecha.paintComponents( g );
 		g.drawImage( imagenHuellaAMostrar , 0 , 0 , null );
 	}
-	
-	
 	
 	
 	
