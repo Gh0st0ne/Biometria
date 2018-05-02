@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
@@ -362,6 +363,15 @@ public class Ventana {
 			public void actionPerformed(ActionEvent e) {
 				
 				//TODO: Funcionalidad al presionar el botón ángulos
+				
+				Dialogo dialog = new Dialogo();
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+				
+				
+				for (int i = 0; i < 100; i++) {
+					dialog.imprimirLinea("hola");
+				}
 				
 			}
 		});
