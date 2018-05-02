@@ -7,11 +7,9 @@ import huellas.HuellaDactilar;
  
 public class ZhangSuen {
   
-    final static int[][] nbrs = {{0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1},
-        {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}};
+    final static int[][] nbrs = {{0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}};
  
-    final static int[][][] nbrGroups = {{{0, 2, 4}, {2, 4, 6}}, {{0, 2, 6},
-        {0, 4, 6}}};
+    final static int[][][] nbrGroups = {{{0, 2, 4}, {2, 4, 6}}, {{0, 2, 6}, {0, 4, 6}}};
  
     static List<Point> toWhite = new ArrayList<>();
     static int[][] grid;

@@ -67,6 +67,13 @@ public class GestorHuellas {
 	}
 	
 	/**
+	 * Reinicia el hisotiral de huellas
+	 */
+	public void reiniciarHistorial() {
+		historial = new Stack<HuellaDactilar>();
+	}
+	
+	/**
 	 * Método que devuelve el umbral medio de la huella
 	 * @return entero que representa el umbral medio
 	 */
@@ -282,6 +289,22 @@ public class GestorHuellas {
 			HuellaDactilar imgAdelgazada = zs.thinImage();
 			
 			return imgAdelgazada;
+	 }
+	 
+	 /**
+	  * Método que detecta las minucias de una huella adelgazada
+	  * @param imgEntrada la huella sobre la que se quieren detectar las minucias
+	  */
+	 public void detectarMinucias( HuellaDactilar imgEntrada ) {
+		 //TODO: Implementar método detectarMinucias
+	 }
+	 
+	 /**
+	  * Método que calculas los ángulos de las minucias
+	  * @param imgEntrada la huella sobre la que se quieren detectar los ángulos de las minucias
+	  */
+	 public void calcularAngulos( HuellaDactilar imgEntrada ) {
+		 //TODO: Implementar método calcularAngulos
 	 }
 	 
 }

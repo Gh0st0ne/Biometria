@@ -16,8 +16,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import huellas.GestorHuellas;
 import huellas.HuellaDactilar;
@@ -148,6 +146,7 @@ public class Ventana {
 		btnDeshacer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				deshacer();
 				
 			}
 		});
@@ -213,6 +212,7 @@ public class Ventana {
 				btnUmbralizar.setEnabled( true );
 				sliderUmbral.setEnabled( true );
 				sliderUmbral.setValue( gh.getUmbralMedio() );
+				
 			}
 		});
 		btnEcualizar.setBounds(390, 83, 135, 29);
@@ -225,6 +225,9 @@ public class Ventana {
 		btnUmbralizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				// La huella del panel izquierdo desaparece de la interfaz, se almacena en el historial de deshacer
+				gh.almacenarEnHistorial( huellaIzquierda );
+
 				// Copiamos la huella del panel de la derecha a la izquierda
 				huellaIzquierda = huellaDerecha;				
 				
@@ -241,6 +244,10 @@ public class Ventana {
 				btnUmbralizar.setEnabled( false );
 				sliderUmbral.setEnabled( false );
 				btnFiltrar.setEnabled( true );
+
+				// Se activa la función deshacer
+				btnDeshacer.setEnabled( true );
+
 				
 			}
 		});
@@ -258,24 +265,15 @@ public class Ventana {
 		frame.getContentPane().add(sliderUmbral);
 		sliderUmbral.setEnabled( false );
 		
-	    sliderUmbral.addChangeListener( new ChangeListener() {
-	        public void stateChanged(ChangeEvent e) {
-	          System.out.println("Slider Umbral: " + sliderUmbral.getValue());
-	        	
-//				HuellaDactilar huellaUmbralizada = gh.umbralizar( huellaDerecha , sliderUmbral.getValue() );
-//				huellaDerecha = huellaUmbralizada;
-//				
-//				pintarPanelDerecha( huellaUmbralizada , GestorHuellas.HUELLA_BYN );
-	        	
-	        }
-	      });
-		
 		
 		// BOTÓN PARA FILTRAR
 		btnFiltrar = new JButton("Filtrar");
 		btnFiltrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				// La huella del panel izquierdo desaparece de la interfaz, se almacena en el historial de deshacer
+				gh.almacenarEnHistorial( huellaIzquierda );
+
 				// Copiamos la huella del panel de la derecha a la izquierda
 				huellaIzquierda = huellaDerecha;				
 				
@@ -303,6 +301,9 @@ public class Ventana {
 		btnAdelgazar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				// La huella del panel izquierdo desaparece de la interfaz, se almacena en el historial de deshacer
+				gh.almacenarEnHistorial( huellaIzquierda );
+
 				// Copiamos la huella del panel de la derecha a la izquierda
 				huellaIzquierda = huellaDerecha;				
 				
@@ -330,6 +331,9 @@ public class Ventana {
 		btnMinucias.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				// La huella del panel izquierdo desaparece de la interfaz, se almacena en el historial de deshacer
+				gh.almacenarEnHistorial( huellaIzquierda );
+
 				// Copiamos la huella del panel de la derecha a la izquierda
 				huellaIzquierda = huellaDerecha;				
 				
@@ -357,7 +361,7 @@ public class Ventana {
 		btnAngulos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				//TODO: Funcionalidad al presionar el botón ángulos
 				
 			}
 		});
@@ -399,21 +403,102 @@ public class Ventana {
 	
 	
 	private void resetear() {
+		
+		// Pinta huella original en el panel izquierdo
 		pintarPanelIzquierda( gh.getHuellaOriginal() );
 		
-		
+		// Borramos lo pintado en el panel de la derecha
 		Graphics g = panelHuellaDerecha.getGraphics();
 		panelHuellaDerecha.paintComponents(g);
 		g.clearRect( 0 , 0 , panelHuellaDerecha.getWidth() , panelHuellaDerecha.getHeight() );
 		
-		btnReiniciar.setEnabled( false );
+		// Eliminamos el hisotiral de deshacer
+		gh.reiniciarHistorial();
 		
+		// Desactivamos botones de reiniciar e historial
+		btnReiniciar.setEnabled( false );
+		btnDeshacer.setEnabled( false );
+		
+		// Colocamos el estado de inicio de los botones de la interfaz
 		btnGrises.setEnabled( true );
 		btnEcualizar.setEnabled( false );
 		btnUmbralizar.setEnabled( false );
 		sliderUmbral.setEnabled( false );
 		btnFiltrar.setEnabled( false );
 		btnAdelgazar.setEnabled( false );
+		btnMinucias.setEnabled( false );
+		
+		
+	}
+	
+	private void deshacer() {
+		
+		if( btnFiltrar.isEnabled() ) {	// PREVIO    --> Panel izquierdo: Ecualizada	Panel derecho: Umbralizada	Historial: Grises
+										// RESULTADO --> Panel izquierdo: Grises	Panel derecho: Ecualizada	Historial: -
+			
+			// En el panel derecho mostramos el contenido del izquierdo
+			huellaDerecha = huellaIzquierda;
+			pintarPanelDerecha( GestorHuellas.HUELLA_GRIS );
+			
+			// Recuperamos para el panel izquierdo la huella en grises
+			huellaIzquierda = gh.recuperarDeHistorial();
+			pintarPanelIzquierda( GestorHuellas.HUELLA_GRIS );
+			
+			// Cambiamos el estado de los botones
+			btnUmbralizar.setEnabled( true );
+			sliderUmbral.setEnabled( true );
+			btnFiltrar.setEnabled( false );
+			
+			// Ya no podemos deshacer más pasos, desactivamos el botón
+			btnDeshacer.setEnabled( false );
+			
+		} else if( btnAdelgazar.isEnabled() ) {	// PREVIO    --> Panel izquierdo: Umbralizada	Panel derecho: Filtrada	Historial: Ecualizada/Grises
+												// RESULTADO --> Panel izquierdo: Ecualizada	Panel derecho: Umbralizada	Historial: Grises
+			
+			// En el panel derecho mostramos el contenido del izquierdo
+			huellaDerecha = huellaIzquierda;
+			pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+			
+			// Recuperamos para el panel izquierdo la huella ecualizada
+			huellaIzquierda = gh.recuperarDeHistorial();
+			pintarPanelIzquierda( GestorHuellas.HUELLA_GRIS );
+			
+			// Cambiamos el estado de los botones
+			btnFiltrar.setEnabled( true );
+			btnAdelgazar.setEnabled( false );
+			
+		} else if( btnMinucias.isEnabled() ) {	// PREVIO    --> Panel izquierdo: Filtrada	Panel derecho: Adelgazada	Historial: Umbralizada/Ecualizada/Grises
+												// RESULTADO --> Panel izquierdo: Umbralizada	Panel derecho: Filtrada	Historial: Ecualizada/Grises
+			
+			// En el panel derecho mostramos el contenido del izquierdo
+			huellaDerecha = huellaIzquierda;
+			pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+			
+			// Recuperamos para el panel izquierdo la huella ecualizada
+			huellaIzquierda = gh.recuperarDeHistorial();
+			pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
+			
+			// Cambiamos el estado de los botones
+			btnAdelgazar.setEnabled( true );
+			btnMinucias.setEnabled( false );
+			
+		} else if( btnAngulos.isEnabled() ) {	// PREVIO    --> Panel izquierdo: Adelgazada	Panel derecho: Minucias	Historial: Filtrada/Umbralizada/Ecualizada/Grises
+												// RESULTADO --> Panel izquierdo: Filtrada	Panel derecho: Adelgazada	Historial: Umbralizada/Ecualizada/Grises
+			
+			// En el panel derecho mostramos el contenido del izquierdo
+			huellaDerecha = huellaIzquierda;
+			pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+			
+			// Recuperamos para el panel izquierdo la huella ecualizada
+			huellaIzquierda = gh.recuperarDeHistorial();
+			pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
+			
+			// Cambiamos el estado de los botones
+			btnMinucias.setEnabled( true );
+			btnAngulos.setEnabled( false );
+			
+		}
+		
 	}
 	
 	
