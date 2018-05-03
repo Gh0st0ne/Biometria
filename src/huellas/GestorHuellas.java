@@ -1,6 +1,8 @@
 package huellas;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import librerias.ZhangSuen;
@@ -15,6 +17,8 @@ public class GestorHuellas {
 	private BufferedImage huellaOriginal;		// Almacena la huella original
 	private int umbralMedio;						// Almacena el valor medio del umbral
 	
+	private List<Minucia> minucias;				// Almacena las minucias de la huella
+	
 	private Stack<HuellaDactilar> historial;		// Pila que almacena los tratamientos realizados para habilitar función deshacer
 	
 	/**
@@ -23,6 +27,7 @@ public class GestorHuellas {
 	public GestorHuellas() {
 		huellaOriginal = null;
 		umbralMedio = -1;
+		minucias = new ArrayList<Minucia>();
 		historial = new Stack<HuellaDactilar>();
 	}
 	
@@ -41,7 +46,15 @@ public class GestorHuellas {
 	public BufferedImage getHuellaOriginal() {
 		return huellaOriginal;
 	}
-	
+		
+	/**
+	 * Almacena la minucia pasada por parámetros en la lista
+	 * @param minucia la minucia que se quiere almacenar
+	 */
+	public void almacenarMinucia( Minucia minucia ) {
+		minucias.add( minucia );
+	}
+			
 	/**
 	 * Método que almacena en el historial una huella tratada para poder deshacer
 	 * @param huella la huella tratada que se quiere almacenar en el hisotorial
@@ -51,7 +64,7 @@ public class GestorHuellas {
 	}
 	
 	/**
-	 * Método que extrae del historial la última huella tratada
+	 * Método que extrae (y elimina) del historial la última huella tratada
 	 * @return la última huella tratada
 	 */
 	public HuellaDactilar recuperarDeHistorial(){
