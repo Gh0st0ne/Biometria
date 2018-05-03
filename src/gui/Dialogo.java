@@ -23,7 +23,7 @@ public class Dialogo extends JDialog {
 	 * Create the dialog.
 	 */
 	public Dialogo() {
-		setBounds(100, 100, 450, 300);
+		setBounds(200, 200, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

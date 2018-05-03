@@ -342,7 +342,9 @@ public class Ventana {
 				pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
 				
 				// Detectamos las minucias en la huella derecha
-//				huellaDerecha = gh.adelgazar( huellaDerecha );
+				gh.detectarMinucias( huellaDerecha );
+				
+				//TODO: Pintar minucias en interfaz
 				
 				// Pintamos la huella de la derecha
 //				pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
@@ -361,15 +363,18 @@ public class Ventana {
 		btnAngulos = new JButton("Ángulos");
 		btnAngulos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				//TODO: Funcionalidad al presionar el botón ángulos
-				
+
+				// Creamos el cuadro de diálogo y lo mostramos
 				Dialogo dialog = new Dialogo();
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				dialog.setVisible(true);
 				
 				
-				for (int i = 0; i < 100; i++) {
+				// Imprimimos el contenido a mostrar en el diálogo
+				
+				//TODO: Imprimir contenido en diálogo
+				
+				for (int i = 0; i < 100; i++) {		// Ejemplo
 					dialog.imprimirLinea("hola");
 				}
 				
