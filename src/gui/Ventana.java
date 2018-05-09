@@ -430,6 +430,9 @@ public class Ventana {
 				// Pintamos la huella de la izquierda
 				pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
 				
+				// Reiniciamos la lista de minucias para que almacene las detectadas
+				gh.reiniciarMinucias();
+				
 				// Detectamos las minucias en la huella derecha
 				gh.detectarMinucias( huellaDerecha , (int) spinnerLimite.getValue() );
 				

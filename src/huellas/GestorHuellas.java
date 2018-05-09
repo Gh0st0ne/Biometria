@@ -48,11 +48,26 @@ public class GestorHuellas {
 	}
 		
 	/**
+	 * Método que devuelve la lista de minucias detectadas en la huella
+	 * @return Lista de Minucia
+	 */
+	public List<Minucia> getListaMinucias(){
+		return minucias;
+	}
+	
+	/**
 	 * Almacena la minucia pasada por parámetros en la lista
 	 * @param minucia la minucia que se quiere almacenar
 	 */
 	public void almacenarMinucia( Minucia minucia ) {
 		minucias.add( minucia );
+	}
+	
+	/**
+	 * Crea una nueva lista para almacenar minucas, descartando la anterior
+	 */
+	public void reiniciarMinucias() {
+		minucias = new ArrayList<Minucia>();
 	}
 			
 	/**
@@ -100,14 +115,6 @@ public class GestorHuellas {
 	 */
 	public void setUmbralMedio( int umbralMedio ) {
 		this.umbralMedio = umbralMedio;
-	}
-	
-	/**
-	 * Método que devuelve la lista de minucias detectadas en la huella
-	 * @return Lista de Minucia
-	 */
-	public List<Minucia> getListaMinucias(){
-		return minucias;
 	}
 	
 	/**
@@ -318,6 +325,8 @@ public class GestorHuellas {
 	  * @param imgEntrada la huella sobre la que se quieren detectar las minucias
 	  */
 	 public void detectarMinucias( HuellaDactilar imgEntrada , int limite ) {
+		 
+		 // TODO: Añadir límites diferenciados para arriba/abajo e izquierda/derecha
 		 
 		 int p;						// Pixel central
 		 int[] Pi = new int[9];		// Píxeles adyacentes
