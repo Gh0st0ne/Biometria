@@ -404,12 +404,12 @@ public class Ventana {
 		
 		// SPINNER PARA MARCAR LOS LÍMITES AL DETECTAR MINUCIAS
 		lblLmite = new JLabel( "Límite" );
-		lblLmite.setBounds(410, 331, 61, 16);
+		lblLmite.setBounds(410, 281, 61, 16);
 		frame.getContentPane().add(lblLmite);
 		lblLmite.setEnabled( false );
 		
 		spinnerLimite = new JSpinner();
-		spinnerLimite.setBounds(450, 326, 60, 26);
+		spinnerLimite.setBounds(450, 276, 60, 26);
 		spinnerLimite.setValue( 10 );
 		frame.getContentPane().add( spinnerLimite );
 		spinnerLimite.setEnabled( false );
@@ -449,7 +449,7 @@ public class Ventana {
 				
 			}
 		});
-		btnMinucias.setBounds(390, 261, 135, 29);
+		btnMinucias.setBounds(390, 311, 135, 29);
 		frame.getContentPane().add(btnMinucias);
 		btnMinucias.setEnabled( false );
 		
@@ -480,7 +480,7 @@ public class Ventana {
 				
 			}
 		});
-		btnAngulos.setBounds(390, 290, 135, 29);
+		btnAngulos.setBounds(390, 340, 135, 29);
 		frame.getContentPane().add(btnAngulos);
 		btnAngulos.setEnabled( false );
 		
