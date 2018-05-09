@@ -433,10 +433,10 @@ public class Ventana {
 				// Detectamos las minucias en la huella derecha
 				gh.detectarMinucias( huellaDerecha , (int) spinnerLimite.getValue() );
 				
-				//TODO: Pintar minucias en interfaz
-				
 				// Pintamos la huella de la derecha
-//				pintarPanelDerecha( GestorHuellas.HUELLA_BYN );
+				BufferedImage huellaMinucias = gh.convertirRGB( huellaDerecha , GestorHuellas.HUELLA_BYN );
+				pintarMinucias( huellaMinucias );
+				pintarPanelDerecho( huellaMinucias );
 				
 				// Actualizamos el estado de los botones de la interfaz
 				btnMinucias.setEnabled( false );
@@ -490,6 +490,16 @@ public class Ventana {
 	private void pintarPanelIzquierda( BufferedImage huellaAMostrar ) {
 		Graphics g = panelHuellaIzquierda.getGraphics();
 		panelHuellaIzquierda.paintComponents( g );
+		g.drawImage( huellaAMostrar , 0 , 0 , null );
+	}
+
+	/**
+	 * Pinta en el marco derecho de la interfaz la BufferedImage pasada por parámetros
+	 * @param huellaAMostrar la imagen de la huella que se desea mostrar en la interfaz
+	 */
+	private void pintarPanelDerecho( BufferedImage huellaAMostrar ) {
+		Graphics g = panelHuellaDerecha.getGraphics();
+		panelHuellaDerecha.paintComponents( g );
 		g.drawImage( huellaAMostrar , 0 , 0 , null );
 	}
 	
@@ -621,8 +631,34 @@ public class Ventana {
 	}
 	
 	
-	private void pintarMinucias() {
+	private void pintarMinucias( BufferedImage img ) {
 		// TODO: Implementar pintar minucias
+		
+		int azul = (255<<24 | 0 << 16 | 0 << 8 | 255);
+		int rojo = (255<<24 | 255 << 16 | 0 << 8 | 0);
+		
+		int pixelRGB;
+		
+		for (int i=0; i<gh.getListaMinucias().size(); i++){
+			Minucia m= gh.getListaMinucias().get(i);
+			
+			if (m.getTipo() == 1)
+				pixelRGB = rojo;
+			else
+				pixelRGB = azul;
+			
+			img.setRGB(m.getX(), m.getY(), pixelRGB);
+			
+			img.setRGB(m.getX()+1, m.getY()+1, pixelRGB);
+			img.setRGB(m.getX()-1, m.getY()-1, pixelRGB);
+			img.setRGB(m.getX()-1, m.getY()+1, pixelRGB);
+			img.setRGB(m.getX()+1, m.getY()-1, pixelRGB);
+			img.setRGB(m.getX(), m.getY()+1, pixelRGB);
+			img.setRGB(m.getX(), m.getY()-1, pixelRGB);
+			img.setRGB(m.getX()+1, m.getY(), pixelRGB);
+			img.setRGB(m.getX()-1, m.getY(), pixelRGB);
+		}
+		
 	}
 	
 	
