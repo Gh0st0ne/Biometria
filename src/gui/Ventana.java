@@ -504,27 +504,27 @@ public class Ventana {
 	}
 	
 
+	/**
+	 * Pinta la huella izquierda en el panel izquierdo
+	 * @param modo modo de imagen a pintar
+	 */
 	private void pintarPanelIzquierda( int modo ) {
-		
 		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaIzquierda , modo );
-		
-//		gIzquierda = panelHuellaIzquierda.getGraphics();
-//		panelHuellaIzquierda.paintComponents( gIzquierda );
 		gIzquierda.drawImage( imagenHuellaAMostrar , 0 , 0 , null );
 	}
 	
+	/**
+	 * Pinta la huella derecha en el panel derecho
+	 * @param modo modo de imagen a pintar
+	 */
 	private void pintarPanelDerecha( int modo ) {
-		
 		BufferedImage imagenHuellaAMostrar = gh.convertirRGB( huellaDerecha , modo );
-		
-//		gDerecha = panelHuellaDerecha.getGraphics();
-//		panelHuellaDerecha.paintComponents( gDerecha );
 		gDerecha.drawImage( imagenHuellaAMostrar , 0 , 0 , null );
 	}
 	
-	
-	
-	
+	/**
+	 * Resetea la aplicación a su estado inicial, con la huella original cargada en la izquierda
+	 */
 	private void resetear() {
 		
 		// Pinta huella original en el panel izquierdo
@@ -556,6 +556,9 @@ public class Ventana {
 		
 	}
 	
+	/**
+	 * Método que implementa la función deshacer
+	 */
 	private void deshacer() {
 		
 		if( btnFiltrar.isEnabled() ) {	// PREVIO    --> Panel izquierdo: Ecualizada	Panel derecho: Umbralizada	Historial: Grises
@@ -630,39 +633,41 @@ public class Ventana {
 		
 	}
 	
-	
+	/**
+	 * Método que pinta las minucias en la imagen a mostrar pasada por parámetros
+	 * @param img la imagen que representa la huella sobre la que se han calculado las minucias
+	 */
 	private void pintarMinucias( BufferedImage img ) {
-		// TODO: Implementar pintar minucias
 		
 		int azul = (255<<24 | 0 << 16 | 0 << 8 | 255);
 		int rojo = (255<<24 | 255 << 16 | 0 << 8 | 0);
 		
 		int pixelRGB;
-		
-		for (int i=0; i<gh.getListaMinucias().size(); i++){
-			Minucia m= gh.getListaMinucias().get(i);
+		Minucia aux;
+				
+		for( int i = 0 ; i < gh.getListaMinucias().size() ; i++ ){
 			
-			if (m.getTipo() == 1)
-				pixelRGB = rojo;
-			else
-				pixelRGB = azul;
+			aux = gh.getListaMinucias().get(i);
 			
-			img.setRGB(m.getX(), m.getY(), pixelRGB);
+			if( aux.getTipo() == 1 ) {
+				pixelRGB = azul;			// Si la minucia es tipo corte, la pinta en azul				
+			} else {
+				pixelRGB = rojo;			// Si la minucia es tipo bifurcación, la pinta en rojo
+			}
 			
-			img.setRGB(m.getX()+1, m.getY()+1, pixelRGB);
-			img.setRGB(m.getX()-1, m.getY()-1, pixelRGB);
-			img.setRGB(m.getX()-1, m.getY()+1, pixelRGB);
-			img.setRGB(m.getX()+1, m.getY()-1, pixelRGB);
-			img.setRGB(m.getX(), m.getY()+1, pixelRGB);
-			img.setRGB(m.getX(), m.getY()-1, pixelRGB);
-			img.setRGB(m.getX()+1, m.getY(), pixelRGB);
-			img.setRGB(m.getX()-1, m.getY(), pixelRGB);
+			img.setRGB( aux.getX() , aux.getY() , pixelRGB );		// Pixel que representa la minucia
+			
+			img.setRGB( aux.getX() + 1 , aux.getY() + 1, pixelRGB );		// Pixeles que rodean la minucia
+			img.setRGB( aux.getX() - 1 , aux.getY() - 1, pixelRGB );
+			img.setRGB( aux.getX() - 1 , aux.getY() + 1, pixelRGB );
+			img.setRGB( aux.getX() + 1 , aux.getY() - 1, pixelRGB );
+			img.setRGB( aux.getX()     , aux.getY() + 1, pixelRGB );
+			img.setRGB( aux.getX()     , aux.getY() - 1, pixelRGB );
+			img.setRGB( aux.getX() + 1 , aux.getY()    , pixelRGB );
+			img.setRGB( aux.getX() - 1 , aux.getY()    , pixelRGB );
 		}
 		
 	}
-	
-	
-	
 	
 	
 	
