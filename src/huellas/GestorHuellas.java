@@ -103,6 +103,14 @@ public class GestorHuellas {
 	}
 	
 	/**
+	 * Método que devuelve la lista de minucias detectadas en la huella
+	 * @return Lista de Minucia
+	 */
+	public List<Minucia> getListaMinucias(){
+		return minucias;
+	}
+	
+	/**
 	 * Convierte una imagen de entrada en un objeto de la clase huella dactilar
 	 * @param huellaEntrada la imagen origen
 	 * @return objeto HuellaDactilar
@@ -306,10 +314,49 @@ public class GestorHuellas {
 	 
 	 /**
 	  * Método que detecta las minucias de una huella adelgazada
+	  * Las minucias devueltas tienen Crossing Numbre = 1 (corte o final) ó 3 (bifurcación)
 	  * @param imgEntrada la huella sobre la que se quieren detectar las minucias
 	  */
-	 public void detectarMinucias( HuellaDactilar imgEntrada ) {
-		 //TODO: Implementar método detectarMinucias
+	 public void detectarMinucias( HuellaDactilar imgEntrada , int limite ) {
+		 
+		 int p;						// Pixel central
+		 int[] Pi = new int[9];		// Píxeles adyacentes
+		 int cn;						// Crossing number
+		 int aux = 0;
+		 
+		 for( int x=limite ; x < imgEntrada.getWidth()-limite ; x++ ){
+			 for( int y=limite ; y<imgEntrada.getHeight()-limite ; y++ ){
+				 
+				 p = imgEntrada.getPixel( x , y );
+				 aux = 0;
+				 
+				 if( p == 0 ){
+					 
+					 Pi[0] = imgEntrada.getPixel( x+1 , y   );
+					 Pi[1] = imgEntrada.getPixel( x+1 , y-1 );
+					 Pi[2] = imgEntrada.getPixel( x   , y-1 );
+					 Pi[3] = imgEntrada.getPixel( x-1 , y-1 );
+					 Pi[4] = imgEntrada.getPixel( x-1 , y   );
+					 Pi[5] = imgEntrada.getPixel( x-1 , y+1 );
+					 Pi[6] = imgEntrada.getPixel( x   , y+1 );
+					 Pi[7] = imgEntrada.getPixel( x+1 , y+1 );
+					 Pi[8] = imgEntrada.getPixel( x+1 , y   );
+					 
+					 for( int i = 0 ; i <= 7 ; i++ ){
+						 aux = aux + Math.abs(Pi[i] - Pi[i+1]);
+					 }
+					 
+					 cn = aux/2;
+					 
+					 if (cn == 1 || cn == 3){
+						 minucias.add(new Minucia(x, y, cn));
+					 }
+					 
+				 }
+				 
+			 }
+		 }
+
 	 }
 	 
 	 /**
