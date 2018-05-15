@@ -29,6 +29,7 @@ import java.awt.Color;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class Ventana {
 	
@@ -66,6 +67,7 @@ public class Ventana {
 	private JSpinner spinnerLimite;
 	private JButton btnMinucias;
 	private JButton btnAngulos;
+	private JButton btnExportarDatos;
 
 
 	/**
@@ -413,9 +415,7 @@ public class Ventana {
 		spinnerLimite.setValue( 10 );
 		frame.getContentPane().add( spinnerLimite );
 		spinnerLimite.setEnabled( false );
-		
-		// TODO: dibujar límite en huella y modificar al variar el valor
-		
+				
 		// BOTÓN MINUCIAS
 		btnMinucias = new JButton("Minucias");
 		btnMinucias.addActionListener(new ActionListener() {
@@ -430,8 +430,9 @@ public class Ventana {
 				// Pintamos la huella de la izquierda
 				pintarPanelIzquierda( GestorHuellas.HUELLA_BYN );
 				
-				// Reiniciamos la lista de minucias para que almacene las detectadas
+				// Reiniciamos la lista de minucias y ángulos para que almacene las detectadas
 				gh.reiniciarMinucias();
+				gh.reiniciarAngulos();
 				
 				// Detectamos las minucias en la huella derecha
 				gh.detectarMinucias( huellaDerecha , (int) spinnerLimite.getValue() );
@@ -457,6 +458,9 @@ public class Ventana {
 		btnAngulos = new JButton("Ángulos");
 		btnAngulos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				// Calculamos los ángulos
+				gh.calcularAngulos( huellaDerecha );
 
 				// Creamos el cuadro de diálogo y lo mostramos
 				Dialogo dialog = new Dialogo();
@@ -470,19 +474,39 @@ public class Ventana {
 				dialog.imprimirLinea( "Número de minucias detectadas: " + gh.getListaMinucias().size() );
 				
 				Minucia aux;
+				Double angulo;
 				for( int i = 0 ; i < gh.getListaMinucias().size() ; i++ ) {
 					aux = gh.getListaMinucias().get( i );
-					dialog.imprimirLinea( "  " + i + " en (" + aux.getX() + "," + aux.getY() + ")" );
+					angulo = gh.getListaAngulos().get( i );
+					dialog.imprimirLinea( "  " + i + " en (" + aux.getX() + "," + aux.getY() + ") con ángulo " + angulo );
 				}
 				
-				
-				//TODO: Imprimir contenido en diálogo
+				// Actualizamos el estado de los botones de la interfaz
+				btnExportarDatos.setEnabled( true );
 				
 			}
 		});
 		btnAngulos.setBounds(390, 340, 135, 29);
 		frame.getContentPane().add(btnAngulos);
 		btnAngulos.setEnabled( false );
+		
+		// BOTÓN EXPORTAR DATOS A FICHERO
+		btnExportarDatos = new JButton("Exportar datos");
+		btnExportarDatos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if( gh.escribirFichero( "minucias.csv" ) ) {
+					JOptionPane.showMessageDialog(null, "Operación realizada correctamente" , "Biometria" , JOptionPane.INFORMATION_MESSAGE );
+					btnExportarDatos.setEnabled( false );
+				} else {
+					JOptionPane.showMessageDialog( null , "Se produjo un error en la operación!" , "ERROR" , JOptionPane.ERROR_MESSAGE );
+				}
+				
+			}
+		});
+		btnExportarDatos.setBounds(390, 369, 135, 29);
+		frame.getContentPane().add(btnExportarDatos);
+		btnExportarDatos.setEnabled( false );
 		
 	}
 	
@@ -556,6 +580,7 @@ public class Ventana {
 		lblLmite.setEnabled( false );
 		spinnerLimite.setEnabled( false );
 		btnAngulos.setEnabled( false );
+		btnExportarDatos.setEnabled( false );
 		
 	}
 	
@@ -631,6 +656,7 @@ public class Ventana {
 			lblLmite.setEnabled( true );
 			spinnerLimite.setEnabled( true );
 			btnAngulos.setEnabled( false );
+			btnExportarDatos.setEnabled( false );
 			
 		}
 		

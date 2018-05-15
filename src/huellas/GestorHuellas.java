@@ -1,9 +1,14 @@
 package huellas;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import com.opencsv.CSVWriter;
 
 import librerias.ZhangSuen;
 
@@ -18,6 +23,7 @@ public class GestorHuellas {
 	private int umbralMedio;						// Almacena el valor medio del umbral
 	
 	private List<Minucia> minucias;				// Almacena las minucias de la huella
+	private List<Double> angulos;					// Almacena los ángulos de las minucias
 	
 	private Stack<HuellaDactilar> historial;		// Pila que almacena los tratamientos realizados para habilitar función deshacer
 	
@@ -28,6 +34,7 @@ public class GestorHuellas {
 		huellaOriginal = null;
 		umbralMedio = -1;
 		minucias = new ArrayList<Minucia>();
+		angulos = new ArrayList<Double>();
 		historial = new Stack<HuellaDactilar>();
 	}
 	
@@ -68,6 +75,29 @@ public class GestorHuellas {
 	 */
 	public void reiniciarMinucias() {
 		minucias = new ArrayList<Minucia>();
+	}
+	
+	/**
+	 * Método que devuelve la lista de ángulos de las minucias
+	 * @return Lista de Ángulos
+	 */
+	public List<Double> getListaAngulos(){
+		return angulos;
+	}
+	
+	/**
+	 * Almacena el ángulo pasada por parámetros en la lista
+	 * @param angulo el ángulo a almacenar
+	 */
+	public void almacenarAngulo( Double angulo ) {
+		angulos.add( angulo );
+	}
+	
+	/**
+	 * Crea una nueva lista para almacenar ángulos de las minucias, descartando la anterior
+	 */
+	public void reiniciarAngulos() {
+		angulos = new ArrayList<Double>();
 	}
 			
 	/**
@@ -323,11 +353,10 @@ public class GestorHuellas {
 	  * Método que detecta las minucias de una huella adelgazada
 	  * Las minucias devueltas tienen Crossing Numbre = 1 (corte o final) ó 3 (bifurcación)
 	  * @param imgEntrada la huella sobre la que se quieren detectar las minucias
+	  * @param limite el límite para alejarse de los bordes y descartar falsas minucias
 	  */
 	 public void detectarMinucias( HuellaDactilar imgEntrada , int limite ) {
-		 
-		 // TODO: Añadir límites diferenciados para arriba/abajo e izquierda/derecha
-		 
+		 		 
 		 int p;						// Pixel central
 		 int[] Pi = new int[9];		// Píxeles adyacentes
 		 int cn;						// Crossing number
@@ -373,7 +402,209 @@ public class GestorHuellas {
 	  * @param imgEntrada la huella sobre la que se quieren detectar los ángulos de las minucias
 	  */
 	 public void calcularAngulos( HuellaDactilar imgEntrada ) {
-		 //TODO: Implementar método calcularAngulos
+		 		 
+		 boolean fin = false;
+		 int xInicial, yInicial;
+		 int x, y;
+		 
+		 ArrayList<Point> visitados = new ArrayList<Point>();
+		 ArrayList<Point> vecinos = new ArrayList<Point>();
+		 ArrayList<Point> aux = new ArrayList<Point>();
+		 
+		 for( int i = 0 ; i < this.minucias.size() ; i++ ){
+			 
+			 // Las coordenadas iniciales son las de la minucia
+			 xInicial = minucias.get( i ).getX();
+			 yInicial = minucias.get( i ).getY();
+			 
+			 // Las coordenadas actuales, son las de la minucia
+			 x = xInicial;
+			 y = yInicial;
+			 
+			 // Vaciamos la lista de visitados y añaidmos la minucia a visitados
+			 visitados.clear();
+			 visitados.add( new Point ( x , y ) );
+			 
+			 // Añadimos los vecinos de la minucia
+			 obtenerVecinos( vecinos , visitados , vecinos , imgEntrada , x , y );
+			 
+			 // Recorremos los vecinos y los vamos procesando
+			 while( !vecinos.isEmpty() ){
+				 
+				 x = vecinos.get(0).x;
+				 y = vecinos.get(0).y;
+				 
+				 vecinos.remove(0);
+			 
+				 for( int j = 0 ; j < 6 && !fin ; j++ ){
+					 
+					 visitados.add( new Point( x , y ) );
+					 aux.clear();
+					 obtenerVecinos( aux , visitados , vecinos , imgEntrada , x , y );
+					 
+					 if( aux.isEmpty() )
+						 fin = true;
+					 else {
+					 
+						 x = aux.get(0).x;
+						 y = aux.get(0).y;
+						 
+						 if( visitados.contains( new Point( x , y ) ) ){
+							 if( aux.size()==1 )
+								 fin = true;
+							 else{
+								 aux.remove(0);
+							 
+								 x = aux.get(0).x;
+								 y = aux.get(0).y;
+							 }
+						 }
+					 }
+				 } // fin de bucle for
+				 
+				 if( fin )
+					 fin = false;
+				 else{
+					 
+					 // Calcula los gradientes
+					 float Gx =  x - xInicial;
+					 float Gy = y - yInicial;
+					 
+					 // Calcula el ángulo
+					 double radianes = Math.atan( -Gy/Gx );
+					 double angulo = Math.toDegrees( radianes );
+					 
+					 // Corregimos el ángulo según el cuadrante donde se encuentra
+					 if( Gx < 0 && Gy > 0 )
+						 angulo = angulo - 180.0;
+					 
+					 if( Gx < 0 && Gy <= 0 )
+						 angulo = angulo + 180.0;
+
+					 // Añadimos el ángulo a la lista
+					 angulos.add( angulo );
+					 
+				 }
+			 }
+			 
+		 } // Fin de bucle for
+		 
 	 }
+	 
+	 /**
+	  * Método que obtiene los vecinos de la minucia
+	  * @param aux estructura auxiliar
+	  * @param visitados lista con los vecinos visitados
+	  * @param vecinos lista con los vecinos de la minucia
+	  * @param imgEntrada huella tratada
+	  * @param x coordenada x de la minucia
+	  * @param y coordenada y de la minucia
+	  */
+	 public void obtenerVecinos( ArrayList<Point> aux , ArrayList<Point> visitados , ArrayList<Point> vecinos , HuellaDactilar imgEntrada , int x , int y ){
+		 		 
+		 // Obtenemos los píxeles vecinos del pixel actual
+		 int pi1 = imgEntrada.getPixel( x+1 , y   );
+		 int pi2 = imgEntrada.getPixel( x   , y+1 );
+		 int pi3 = imgEntrada.getPixel( x-1 , y   );
+		 int pi4 = imgEntrada.getPixel( x   , y-1 );
+		 int pi5 = imgEntrada.getPixel( x+1 , y-1 );
+		 int pi6 = imgEntrada.getPixel( x-1 , y-1 );
+		 int pi7 = imgEntrada.getPixel( x-1 , y+1 );
+		 int pi8 = imgEntrada.getPixel( x+1 , y+1 );
+		 
+		 // Creamos puntos con las coordenadas de los píxeles actuales
+		 Point pu1 = new Point( x+1 , y   );
+		 Point pu2 = new Point( x   , y+1 );
+		 Point pu3 = new Point( x-1 , y   );
+		 Point pu4 = new Point( x   , y-1 );
+		 Point pu5 = new Point( x+1 , y-1 );
+		 Point pu6 = new Point( x-1 , y-1 );
+		 Point pu7 = new Point( x-1 , y-1 );
+		 Point pu8 = new Point( x+1 , y+1 );
+		 
+		 
+		 if( pi1 == 0 ) {
+			 if( !visitados.contains( pu1 ) && !vecinos.contains( pu1 ) )
+				 aux.add( pu1 );
+		 }
+
+		 if( pi2 == 0 ) {
+			 if( !visitados.contains( pu2 ) && !vecinos.contains( pu2 ) )
+				 aux.add( pu2 );
+		 }
+		 
+		 if( pi3 == 0 ) {
+			 if( !visitados.contains( pu3 ) && !vecinos.contains( pu3 ) )
+				 aux.add( pu3 );
+		 }
+		 
+		 if( pi4 == 0 ) {
+			 if( !visitados.contains( pu4 ) && !vecinos.contains( pu4 ) )
+				 aux.add( pu4 );
+		 }
+		 
+		 if( pi5 == 0 ) {
+			 if( !visitados.contains( pu5 ) && !vecinos.contains( pu5 ) )
+				 aux.add( pu5 );
+		 }
+		 
+		 if( pi6 == 0 ) {
+			 if( !visitados.contains( pu6 ) && !vecinos.contains( pu6 ) )
+				 aux.add( pu6 );
+		 }
+		 
+		 if( pi7 == 0 ) {
+			 if( !visitados.contains( pu7 ) && !vecinos.contains( pu7 ) )
+				 aux.add( pu7 );
+		 }
+		 
+		 if( pi8 == 0 ) {
+			 if( !visitados.contains( pu8 ) && !vecinos.contains( pu8 ) )
+				 aux.add( pu8 );
+		 }
+		 
+	 }
+	 
+	 /**
+	  * Método que exporta los datos de la huella a un fichero csv
+	  * @param ruta la ruta del fichero a crear
+	  */
+	 public boolean escribirFichero( String ruta ) {
+		 
+		 boolean correcto = false;
+		 
+         FileWriter fichero = null;
+         PrintWriter pw = null;
+         Minucia aux;
+         Double angulo;
+
+         try {
+             fichero = new FileWriter( ruta );
+             pw = new PrintWriter( fichero );
+             
+             pw.println( "i,X,Y,Ang" );
+             
+			for( int i = 0 ; i < this.getListaMinucias().size() ; i++ ) {
+				aux = this.getListaMinucias().get( i );
+				angulo = this.getListaAngulos().get( i );
+				pw.println( i + "," + aux.getX() + "," + aux.getY() + "," + angulo );
+			}
+			
+			correcto = true;
+
+         } catch (Exception e) {
+             e.printStackTrace();
+        } finally {
+	           try {
+		            
+	        	   	if (null != fichero)
+	               fichero.close();
+	            } catch (Exception e2) {
+	               e2.printStackTrace();
+	            }
+	         }
+         return correcto;
+	     }
+	 
 	 
 }
