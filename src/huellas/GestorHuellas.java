@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import com.opencsv.CSVWriter;
-
 import librerias.ZhangSuen;
 
 public class GestorHuellas {

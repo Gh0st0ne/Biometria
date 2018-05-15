@@ -3,22 +3,13 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import com.opencsv.CSVWriter;
 
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
 
